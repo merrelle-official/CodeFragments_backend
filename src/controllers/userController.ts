@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { 
-    createUserService,
     getUsersService,
     getOneUserService,
     updateUserService,
     deleteUserService,
+    getUserByNameService
 } from '../services/userService';
 
 export const getUsers: RequestHandler = async (req: Request, res: Response): Promise<void> => {
@@ -45,17 +45,6 @@ export const updateUser: RequestHandler = async (req: Request, res: Response): P
   }
 };
 
-export const createUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { username, password } = req.body;
-    const user = await createUserService(username, password);
-    res.status(201).json(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error creating user' });
-  }
-};
-
 export const deleteUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await deleteUserService(parseInt(req.params.id, 10));
@@ -67,5 +56,19 @@ export const deleteUser: RequestHandler = async (req: Request, res: Response): P
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error deleting user' });
+  }
+};
+
+export const getUserByName: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = await getUserByNameService(req.params.name);
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error fetching user' });
   }
 };

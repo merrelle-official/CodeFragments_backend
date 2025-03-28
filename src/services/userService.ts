@@ -18,22 +18,14 @@ export const updateUserService = async (id: number, data: any) => {
   });
 };
 
-export const createUserService = async (username: string, password: string) => {
-  return await prisma.user.create({
-    data: { username, password },
-  });
-};
-
 export const deleteUserService = async (id: number) => {
   return await prisma.user.delete({
     where: { id },
   });
 };
 
-
-
-export const getUserByUsername = async (username: string) => {
+export const getUserByNameService = async (username: string) => {
   return await prisma.user.findUnique({
     where: { username },
   });
-};
+}
