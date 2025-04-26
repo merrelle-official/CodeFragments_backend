@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { 
     registerUser,
-    loginUser 
+    loginUser, 
+    getMeUser
 } from "../services/authService";
+
+interface AuthenticatedRequest extends Request {
+    userId?: number;
+}
 
 export const register = async (req: Request, res: Response) => {
     try {
-        console.log(req.body);
         const { username, email, password } = req.body;
         const user = await registerUser(username, email, password);
         res.status(201).json({ message: "User registered successfully", user });
@@ -24,3 +28,19 @@ export const login = async (req: Request, res: Response) => {
         res.status(401).json({ error: err instanceof Error ? err.message : "An unknown error occurred" });
     }
 };
+
+export const getMe = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        if (!req.userId) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const user = await getMeUser(req.userId);
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : "An unknown error occurred" });
+    }
+};
+
+

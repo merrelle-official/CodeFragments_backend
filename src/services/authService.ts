@@ -39,8 +39,33 @@ export const loginUser = async (email: string, password: string) => {
         } };
 };
 
-export const verifyToken = (token: string) => {
-    return jwt.verify(token, JWT_SECRET);
+export const getMeUser = async (userId: number) => {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+    return {
+        user: {
+            userId: user.id, 
+            username: user.username, 
+            userEmail: user.email, 
+            userRole: user.role
+        }
+    };
 };
+
+export const verifyToken = async (token: string) => {
+    let decoded: { userId: number };
+
+    try {
+        decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+    } catch (error) {
+        throw new Error("Invalid token");
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    if (!user) throw new Error("User not found");
+
+    return user;
+};
+
 
 

@@ -1,20 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-const secretKey = process.env.JWT_SECRET || 'basickey';
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export const authenticateJWT = (req: Request, res: Response, next: NextFunction): void => {
+interface AuthenticatedRequest extends Request {
+    userId?: number;
+}
+
+export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
-    if (authHeader) {
-        const token = authHeader.split(' ')[1]; 
-        jwt.verify(token, secretKey, (err, user) => {
-            if (err) {
-                return res.status(403).json({ error: 'Пользователь не авторизован' });
-            }
-            (req as any).user = user;
-            next();
-        });
-    } else {
-        res.status(401).json({ error: 'Пользователь не авторизован' });
+    console.log("Auth Header:", authHeader); // Debugging line
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        res.status(401).json({ error: "No token provided" });
+        return 
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+        req.userId = decoded.userId;
+        next();
+    } catch (err) {
+        res.status(401).json({ error: "Invalid token" });
+        return 
     }
 };
