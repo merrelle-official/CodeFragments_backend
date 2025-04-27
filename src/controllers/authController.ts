@@ -22,8 +22,8 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
-        const { token, user: {userId, username, userEmail, userRole} } = await loginUser(email, password);
-        res.json({ token, user: { userId, username, userEmail, userRole } });
+        const { token, user } = await loginUser(email, password);
+        res.json({ token, user });
     } catch (err) {
         res.status(401).json({ error: err instanceof Error ? err.message : "An unknown error occurred" });
     }

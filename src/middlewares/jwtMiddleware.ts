@@ -11,7 +11,6 @@ interface AuthenticatedRequest extends Request {
 
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
-    console.log("Auth Header:", authHeader); // Debugging line
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
