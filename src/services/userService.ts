@@ -1,31 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const getUsersService = async () => {
-  return await prisma.user.findMany();
-};
-
-export const getOneUserService = async (id: number) => {
-  return await prisma.user.findUnique({
-    where: { id },
-  });
-};
-
-export const updateUserService = async (id: number, data: any) => {
-  return await prisma.user.update({
-    where: { id },
-    data,
-  });
-};
-
-export const deleteUserService = async (id: number) => {
-  return await prisma.user.delete({
-    where: { id },
-  });
-};
-
-export const getUserByNameService = async (username: string) => {
-  return await prisma.user.findUnique({
-    where: { username },
-  });
+export const getUserByUsernameService = async (username: string) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { username },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                role: true,
+            },
+        });
+        return user;
+    } catch (error) {
+        console.error('Error fetching user by username:', error);
+        throw new Error('User not found');
+    }
 }

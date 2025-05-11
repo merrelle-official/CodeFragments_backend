@@ -32,10 +32,10 @@ export const loginUser = async (email: string, password: string) => {
     return { 
         token, 
         user: {
-            userId: user.id, 
+            id: user.id, 
             username: user.username, 
-            userEmail: user.email, 
-            userRole: user.role
+            email: user.email, 
+            role: user.role
         } };
 };
 
@@ -44,10 +44,10 @@ export const getMeUser = async (userId: number) => {
     if (!user) throw new Error("User not found");
     return {
         user: {
-            userId: user.id, 
+            id: user.id, 
             username: user.username, 
-            userEmail: user.email, 
-            userRole: user.role
+            email: user.email, 
+            role: user.role
         }
     };
 };
