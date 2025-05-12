@@ -15,12 +15,41 @@ enum Role {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  email    String @unique
-  password String
-  role     Role   @default(USER)
-  snippets Snippet[]
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  snippets  Snippet[]
+  bio           String?
+  firstname     String?
+  lastname      String?
+  gitlink       String?
+  instlink      String?
+  tglink        String?
+  linkedinlink  String?
+  sitelink      String? 
+
+  following UserFollower[] @relation("following")
+  followers UserFollower[] @relation("followers")
+
+  followingCount Int @default(0)
+  followersCount Int @default(0)
+}
+
+model UserFollower {
+  follower    User     @relation("followers", fields: [followerId], references: [id])
+  followerId  Int
+  
+  following   User     @relation("following", fields: [followingId], references: [id])
+  followingId Int
+  
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@index([createdAt])  // Опционально, если нужна сортировка по дате
 }
 
 model Snippet {

@@ -4,6 +4,7 @@ import cors from "cors";
 import userRoutes from './routes/userRoutes';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import authRoutes from "./routes/authRoutes";
+import followRoutes from "./routes/followRoutes"
 
 dotenv.config();
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api', userRoutes);
+app.use('/api', followRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use(errorMiddleware);
