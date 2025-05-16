@@ -16,6 +16,7 @@ export const registerUser = async (username: string, email: string, password: st
             email,
             password: hashedPassword,
             username,
+            firstname: username,
         }
     });
 };

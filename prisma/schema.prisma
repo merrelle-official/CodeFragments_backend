@@ -22,7 +22,7 @@ model User {
   role      Role     @default(USER)
   snippets  Snippet[]
   bio           String?
-  firstname     String?
+  firstname     String? 
   lastname      String?
   gitlink       String?
   instlink      String?
@@ -35,6 +35,8 @@ model User {
 
   followingCount Int @default(0)
   followersCount Int @default(0)
+
+  createdAt   DateTime @default(now())
 }
 
 model UserFollower {
@@ -49,7 +51,7 @@ model UserFollower {
   @@id([followerId, followingId])
   @@index([followerId])
   @@index([followingId])
-  @@index([createdAt])  // Опционально, если нужна сортировка по дате
+  @@index([createdAt])
 }
 
 model Snippet {

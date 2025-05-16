@@ -90,3 +90,20 @@ export const followUser = async (followerId: number, followingId: number) => {
       },
     });
   };
+
+  export const isFollowing = async (followerId: number, followingId: number) => {
+  try {
+    const follow = await prisma.userFollower.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId,
+          followingId,
+        },
+      },
+    });
+    return follow !== null;
+  } catch (error) {
+    console.error('Error checking follow relationship:', error);
+    throw new Error('Failed to check follow status');
+  }
+};

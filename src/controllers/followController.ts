@@ -4,8 +4,10 @@ import {
   getFollowCounts,
   getFollowers,
   getFollowing,
+  isFollowing,
   unfollowUser,
 } from '../services/followService';
+import { AuthenticatedRequest } from '../middlewares/jwtMiddleware';
 
 interface AuthRequest extends Request {
   userId?: number;
@@ -54,6 +56,11 @@ export const followUserHandler = async (req: AuthRequest, res: Response): Promis
     res.status(400).json({ error: 'Invalid user ID to follow' });
     return;
   }
+ 
+  if (followerId === followingId) {
+    res.status(400).json({ error: 'Cannot follow self' });
+    return;
+  }
 
   try {
     const result = await followUser(followerId, followingId);
@@ -82,5 +89,31 @@ export const unfollowUserHandler = async (req: AuthRequest, res: Response): Prom
     res.status(204).end();
   } catch (error: any) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+export const isFollowingHandler = async (req: AuthenticatedRequest, res: Response) => {
+  const followerId = req.userId;
+
+  if (followerId === undefined) {
+    res.status(400).json({ error: 'User is not authenticated' });
+    return 
+  }
+
+  const followingId = parseInt(req.params.userId, 10);
+
+  if (isNaN(followingId)) {
+    res.status(400).json({ error: 'Invalid userId' });
+    return 
+  }
+
+  try {
+    const isUserFollowing = await isFollowing(followerId, followingId);
+    res.status(200).send(isUserFollowing);
+    return
+  } catch (error) {
+    console.error('Error in isFollowingHandler:', error);
+    res.status(500).json({ error: 'Failed to check follow status' });
+    return 
   }
 };

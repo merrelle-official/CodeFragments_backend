@@ -10,6 +10,14 @@ export const getUserByUsernameService = async (username: string) => {
                 username: true,
                 email: true,
                 role: true,
+                firstname: true,
+                lastname: true,
+                bio: true,
+                gitlink: true,
+                instlink: true,
+                linkedinlink: true,
+                tglink: true,
+                sitelink: true,
             },
         });
         return user;
